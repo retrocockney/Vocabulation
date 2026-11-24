@@ -69,6 +69,8 @@ footer a{color:#718477}
 .lib-actions button{border:1px solid var(--line);background:#fff;color:var(--green-dark);border-radius:9px;padding:7px 13px;font-size:12px;font-weight:650;cursor:pointer}
 .lib-actions button:hover{background:var(--pale)}
 
+.game-frame{display:block;width:100%;height:720px;border:0;border-radius:12px;background:#05070a}
+@media(max-width:700px){.game-frame{height:520px}}
 .trailer-list{display:grid;gap:22px}
 .trailer-title{font-family:Georgia,serif;font-size:20px;margin:0 0 10px}
 .trailer-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000}
@@ -234,6 +236,8 @@ body.gamer footer a{color:#00c8ff}
     <button class="game-btn" data-game="simon" type="button">Simon</button>
     <button class="game-btn" data-game="minesweeper" type="button">Minesweeper</button>
     <button class="game-btn" data-game="trailers" type="button">Trailers</button>
+    <button class="game-btn" data-game="liteshot" type="button">LITESHOT</button>
+    <button class="game-btn" data-game="literythym" type="button">LITERYTHYM</button>
   </div>
 
   <!-- Snake -->
@@ -285,6 +289,17 @@ body.gamer footer a{color:#00c8ff}
     <p class="game-msg" id="mineMsg">Open every square that isn’t a mine.</p>
   </section>
 
+  <!-- LITESHOT -->
+  <section class="game hidden" id="game-liteshot">
+    <iframe class="game-frame" data-src="games/liteshot.html" title="LITESHOT" allow="pointer-lock; fullscreen; autoplay"></iframe>
+    <p class="game-msg">Single player works offline. Online 1v1 needs its game server to be running.</p>
+  </section>
+
+  <!-- LITERYTHYM -->
+  <section class="game hidden" id="game-literythym">
+    <iframe class="game-frame" data-src="games/literythym.html" title="LITERYTHYM" allow="fullscreen; autoplay"></iframe>
+  </section>
+
   <!-- Trailers -->
   <section class="game hidden" id="game-trailers">
     <div class="game-hud"><span>Watch the trailers</span></div>
@@ -333,7 +348,10 @@ function setActiveView(view){
   $('langPicker').classList.toggle('hidden', view!=='dictionary');
   $('navLibrary').setAttribute('aria-pressed', String(view==='library'));
   $('navDictionary').setAttribute('aria-pressed', String(view==='dictionary'));
-  if(view!=='games') stopAllGames();
+  if(view!=='games'){
+    stopAllGames();
+    document.querySelectorAll('.game-frame').forEach(f=>f.setAttribute('src','about:blank'));
+  }
 }
 function showHome(){
   setActiveView('dictionary');
@@ -534,6 +552,14 @@ function stopAllGames(){
 function selectGame(name){
   stopAllGames();
   activeGame = name;
+  document.querySelectorAll('.game-frame').forEach(f=>{
+    const sec = f.closest('.game');
+    if(sec.id === 'game-'+name){
+      if(f.getAttribute('src') !== f.dataset.src) f.setAttribute('src', f.dataset.src);
+    } else {
+      f.setAttribute('src', 'about:blank');
+    }
+  });
   document.querySelectorAll('.game').forEach(s=>s.classList.add('hidden'));
   $('game-'+name).classList.remove('hidden');
   document.querySelectorAll('.game-btn').forEach(b=>b.classList.toggle('active', b.dataset.game===name));
